@@ -70,25 +70,26 @@ public class ListaProductos {
         if(estaVacia()){
             return "\nEl inventario está vacío";
         }
-        String reporteCompleto = "\n=== INVENTARIO ACTUAL ===\n";
+        StringBuilder reporteCompleto = new StringBuilder("\n=== INVENTARIO ACTUAL ===\n");
         NodoProducto temp = primero;
         while(temp != null){
-            reporteCompleto += temp.getProducto().toString() + "\n";
+            reporteCompleto.append(temp.getProducto().toString()).append("\n");
             temp = temp.getSiguiente();
         }
-        return reporteCompleto;
+        return reporteCompleto.toString();
     }
     public String generarReporteCostos(){
-        String reporteCostos = "\n=== REPORTE DE COSTOS DE INVENTARIO ===\n";
+        StringBuilder reporteCostos = new StringBuilder("\n=== REPORTE DE COSTOS DE INVENTARIO ===\n");
         double totalAcumulado = 0;
         NodoProducto temp = primero;
         while(temp != null){
             double subtotal = (temp.getProducto().getPrecio() * temp.getProducto().getCantidad());
-            reporteCostos += "producto: " + temp.getProducto().getNombre() + " " + "|" + " " + "Costo Invertido: " + subtotal + "\n";
+            reporteCostos.append("producto: ").append(temp.getProducto().getNombre()).append(" ").append("|")
+                    .append(" ").append("Costo Invertido: ").append(subtotal).append("\n");
             totalAcumulado += subtotal;
             temp = temp.getSiguiente();
         }
-        reporteCostos += "Total acumulado: " + totalAcumulado;
-        return reporteCostos;
+        reporteCostos.append("Total acumulado: ").append(totalAcumulado);
+        return reporteCostos.toString();
     }
 }

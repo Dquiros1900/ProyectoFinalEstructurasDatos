@@ -10,6 +10,7 @@ public class Main {
     static BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
     static String [] arregloOpciones = {"1.Registrar nuevo producto", "2.Buscar producto", "3.Eliminar producto", "4.Ver reporte general", "5.Ver reporte financiero", "0.Salir"};
     static String [] arregloPrioridades = {"1.Lote de Alta Prioridad / Exhibición (Se agregará al INICIO de la lista)", "2.Lote Regular (Se agregará al FINAL de la lista)"};
+    static String [] arregloModificar = {"1.Modificar precio", "2.Modificar cantidad de inventario", "3.Agregar nueva imagen", "0.Cancelar"};
 
     public static void main(String[] args) throws IOException{
         ListaProductos inventario = new ListaProductos();
@@ -166,14 +167,17 @@ public class Main {
         }while(!prioridadValida);
     }
 
-    static void buscarProducto(ListaProductos inventario) throws IOException{
+    static NodoProducto buscarProducto(ListaProductos inventario) throws IOException{
         String nombreBuscado = solicitarTexto("\nIngrese el producto que desea buscar: ");
         NodoProducto resultadoBusqueda = inventario.buscar(nombreBuscado);
         if(resultadoBusqueda != null){
             System.out.println(resultadoBusqueda.getProducto());
+            Producto productoEncontrado = resultadoBusqueda.getProducto();
+            modificarProducto(productoEncontrado);
         }else{
             System.out.println("\nEl producto no se encuentra registrado en el inventario\n");
         }
+        return resultadoBusqueda;
     }
 
     static void eliminarProducto(ListaProductos inventario) throws IOException{
@@ -185,4 +189,40 @@ public class Main {
             System.out.println("\nEl producto no se encuentra registrado en el inventario\n");
         }
     }
+    
+    static void modificarProducto(Producto productoEncontrado) throws IOException{
+            int preguntarPorModificacion = solicitarEntero("\nDesea modificar el producto buscado (1.Si / 2.No)");
+            if (preguntarPorModificacion == 1){
+                imprimirMenu(arregloModificar);
+                int opcionMod = solicitarEntero("\nSeleccione que aspecto desea modificar: ");
+                procesarOpcionesModificar(opcionMod, productoEncontrado);
+            }
+    }
+
+    static void procesarOpcionesModificar(int opcionMod, Producto productoEncontrado) throws IOException{
+        switch(opcionMod){
+            case 1:
+                double nuevoPrecio = solicitarDecimal("Ingrese el nuevo precio:");
+                productoEncontrado.setPrecio(nuevoPrecio);
+                System.out.println("\n¡Precio actualizado con éxito!\n");
+                break;
+            case 2:
+                int nuevaCantidad = solicitarEntero("Ingrese la nueva cantidad:");
+                productoEncontrado.setCantidad(nuevaCantidad);
+                System.out.println("\n¡Cantidad actualizada con éxito!\n");
+                break;
+            case 3:
+                String nuevaRuta = solicitarTexto("Ingrese la ruta de la nueva imagen (ej: src/imagenes/nueva.png):");
+                productoEncontrado.agregarImagen(nuevaRuta);
+                System.out.println("\n¡Imagen agregada con éxito a la lista del producto!\n");
+                break;
+            case 0:
+                System.out.println("\nModificación cancelada.\n");
+                break;
+            default:
+                System.out.println("\nOpción inválida.\n");
+                break;
+        }
+    }
+
 }
