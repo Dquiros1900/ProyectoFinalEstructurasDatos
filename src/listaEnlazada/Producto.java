@@ -59,7 +59,7 @@ public class Producto {
         return listaImagenes;
     }
 
-    //Settings
+    //Setters
 
     public void setNombre(String nombre) {
         this.nombre = nombre;

@@ -78,17 +78,22 @@ public class ListaProductos {
         }
         return reporteCompleto.toString();
     }
+
     public String generarReporteCostos(){
         StringBuilder reporteCostos = new StringBuilder("\n=== REPORTE DE COSTOS DE INVENTARIO ===\n");
         double totalAcumulado = 0;
         NodoProducto temp = primero;
+
         while(temp != null){
             double subtotal = (temp.getProducto().getPrecio() * temp.getProducto().getCantidad());
-            reporteCostos.append("producto: ").append(temp.getProducto().getNombre()).append(" ").append("|")
-                    .append(" ").append("Costo Invertido: ").append(subtotal).append("\n");
+
+            reporteCostos.append("producto: ").append(temp.getProducto().getNombre())
+                    .append(" | Costo Invertido: ").append(subtotal).append("\n");
+
             totalAcumulado += subtotal;
             temp = temp.getSiguiente();
         }
+
         reporteCostos.append("Total acumulado: ").append(totalAcumulado);
         return reporteCostos.toString();
     }

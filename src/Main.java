@@ -16,7 +16,7 @@ public class Main {
         ListaProductos inventario = new ListaProductos();
         ejecutarMenu(inventario);
     }
-
+    //Rutinas para ejecutar el menú
     static void ejecutarMenu(ListaProductos inventario) throws IOException{
         int opcion = -1;
         do{
@@ -32,7 +32,7 @@ public class Main {
             System.out.println(arregloOpciones[i]);
         }
     }
-
+    //Rutinas genéricas para solicitar datos
     static String solicitarTexto(String mensaje) throws IOException {
         System.out.println(mensaje);
         return in.readLine().trim();
@@ -67,7 +67,7 @@ public class Main {
         } while (!valido);
         return numero;
     }
-
+    //Rutina para procesar opciones
     static void procesarOpcion(int opcion, ListaProductos inventario) throws IOException {
         switch (opcion) {
             case 1:
@@ -150,7 +150,7 @@ public class Main {
         int prioridad;
         boolean prioridadValida = false;
         do {
-            System.out.println("\n--- UBICACIÓN DEL PRODUCTO ---\n");
+            System.out.println("\n--- UBICACIÓN DEL PRODUCTO ---");
             imprimirMenu(arregloPrioridades);
             prioridad = solicitarEntero("\n¿Cómo desea registrar este ingreso en el almacén?");
             if (prioridad == 1) {
@@ -166,8 +166,8 @@ public class Main {
             }
         }while(!prioridadValida);
     }
-
-    static NodoProducto buscarProducto(ListaProductos inventario) throws IOException{
+    //Rutinas para buscar, eliminar y modificar productos
+    static void buscarProducto(ListaProductos inventario) throws IOException{
         String nombreBuscado = solicitarTexto("\nIngrese el producto que desea buscar: ");
         NodoProducto resultadoBusqueda = inventario.buscar(nombreBuscado);
         if(resultadoBusqueda != null){
@@ -177,7 +177,6 @@ public class Main {
         }else{
             System.out.println("\nEl producto no se encuentra registrado en el inventario\n");
         }
-        return resultadoBusqueda;
     }
 
     static void eliminarProducto(ListaProductos inventario) throws IOException{
