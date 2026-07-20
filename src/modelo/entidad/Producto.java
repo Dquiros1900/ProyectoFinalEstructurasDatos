@@ -1,4 +1,4 @@
-package listaEnlazada;
+package modelo.entidad;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -31,15 +31,18 @@ public class Producto {
 
     //Procesos
     public void agregarImagen(String rutaImagen){
+
         listaImagenes.add(rutaImagen);
     }
 
     //Getters
     public String getNombre() {
+
         return nombre;
     }
 
     public double getPrecio() {
+
         return precio;
     }
 

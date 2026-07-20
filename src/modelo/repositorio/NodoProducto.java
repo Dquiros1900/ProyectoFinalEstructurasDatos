@@ -1,4 +1,6 @@
-package listaEnlazada;
+package modelo.repositorio;
+
+import modelo.entidad.Producto;
 
 public class NodoProducto {
 

@@ -1,4 +1,8 @@
-package listaEnlazada;
+package modelo.repositorio;
+
+import modelo.entidad.Producto;
+
+import java.util.ArrayList;
 
 public class ListaProductos {
     //Atributos
@@ -6,6 +10,10 @@ public class ListaProductos {
     //Constructor
     public ListaProductos() {
         primero = null;
+    }
+
+    public NodoProducto getPrimero() {
+        return primero;
     }
 
     //Operaciones
@@ -66,7 +74,7 @@ public class ListaProductos {
 
     }
 
-    public String generarReporte(){
+    /*public String generarReporte(){
         if(estaVacia()){
             return "\nEl inventario está vacío";
         }
@@ -96,5 +104,27 @@ public class ListaProductos {
 
         reporteCostos.append("Total acumulado: ").append(totalAcumulado);
         return reporteCostos.toString();
+    }
+
+     */
+
+    public double calcularTotalCarrito(){
+        double total = 0;
+        NodoProducto temp = primero;
+        while(temp != null){
+            total += temp.getProducto().getCantidad() *  temp.getProducto().getPrecio();
+            temp = temp.getSiguiente();
+        }
+        return total;
+    }
+
+    public ArrayList<Producto> obtenerProductos() {
+        ArrayList<Producto> listaPlana = new ArrayList<>();
+        NodoProducto temp = primero;
+        while (temp != null) {
+            listaPlana.add(temp.getProducto());
+            temp = temp.getSiguiente();
+        }
+        return listaPlana;
     }
 }
