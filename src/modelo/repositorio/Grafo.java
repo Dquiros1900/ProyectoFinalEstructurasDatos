@@ -35,9 +35,7 @@ public class Grafo {
         }
     }
 
-    public void algoritmoDijkstra(String inicio,
-                                  Map<String, Integer> distancias,
-                                  Map<String, String> predecesores) {
+    public void algoritmoDijkstra(String inicio, Map<String, Integer> distancias, Map<String, String> predecesores) {
         // Se inicializa una cola de prioridad (funcionalidad min-heap) para explorar los vértices
         PriorityQueue<Vertice> colaVertices = new PriorityQueue<>(Comparator.comparingInt(Vertice::getDistancia));
 
@@ -82,4 +80,61 @@ public class Grafo {
 
         return new ArrayList<>();
     }
+
+    public boolean existeVertice(String vertice) {
+        return listaAdyacencia.containsKey(vertice);
+    }
+
+    public boolean existeCamino (String origen, String destino){
+        if(!existeVertice(origen) || !existeVertice(destino)){
+            return false;
+        }
+
+        return obtenerDistanciaMasCorta(origen, destino) != -1;
+    }
+
+    public List<String> obtenerCaminoMasCorto(String origen, String destino){
+        if(!existeVertice(origen) || !existeVertice(destino)){
+            return new ArrayList<>();
+        }
+
+        if (origen.equals(destino)) {
+            List<String> camino = new ArrayList<>();
+            camino.add(origen);
+            return camino;
+        }
+
+        Map <String, Integer> distancias = new HashMap<>();
+        Map<String,String> predecesores = new HashMap<>();
+
+        algoritmoDijkstra(origen, distancias, predecesores);
+
+        if(distancias.get(destino) == Integer.MAX_VALUE){
+            return new ArrayList<>();
+        }
+
+        return reconstruirCamino(origen, destino, predecesores);
+    }
+
+    public int obtenerDistanciaMasCorta(String origen, String destino){
+        if(!existeVertice(origen) || !existeVertice(destino)){
+            return -1;
+        }else if(origen.equals(destino)){
+            return 0;
+        }
+
+        Map <String, Integer> distancias = new HashMap<>();
+        Map<String,String> predecesores = new HashMap<>();
+        algoritmoDijkstra(origen, distancias, predecesores);
+
+        int distancia = distancias.get(destino);
+        if (distancia == Integer.MAX_VALUE) {
+            return -1;
+        }
+        return distancia;
+    }
+
+
+
+
 }
