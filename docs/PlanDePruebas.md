@@ -5,9 +5,9 @@ Este documento detalla los casos de prueba para validar la experiencia de usuari
 ## 1. Validaciones del Menú Principal
 | ID | Descripción | Acción / Entrada | Resultado Esperado | Estado |
 |---|---|---|---|---|
-| M-01 | Ingreso de tipo de dato incorrecto | Escribir letras cuando el menú pide un número de opción | El sistema atrapa la excepción, muestra un mensaje de error amigable y vuelve a mostrar el menú sin cerrarse. | Pendiente |
-| M-02 | Formato de las ubicaciones | Ingresar ubicaciones con mayúsculas y tildes (ej. "San José") | El menú convierte la entrada a minúsculas y sin acentos automáticamente ("san jose") antes de mandarlo a la lógica[cite: 1]. | Pendiente |
-| M-03 | Validar campos vacíos | Dejar el nombre del producto o la ubicación en blanco al registrar | Muestra una advertencia de campo obligatorio y pide el dato de nuevo. | Pendiente |
+| M-01 | Ingreso de tipo de dato incorrecto | Escribir letras cuando el menú pide un número de opción | El sistema atrapa la excepción, muestra un mensaje de error amigable y vuelve a mostrar el menú sin cerrarse. | Comprobado |
+| M-02 | Formato de las ubicaciones | Ingresar ubicaciones con mayúsculas y tildes (ej. "San José") | El menú convierte la entrada a minúsculas y sin acentos automáticamente ("san jose") antes de mandarlo a la lógica. | Comprobado |
+| M-03 | Validar campos vacíos | Dejar el nombre del producto o la ubicación en blanco al registrar | Muestra una advertencia de campo obligatorio y pide el dato de nuevo. | Comprobado |
 
 ## 2. Pruebas del Grafo y Mapa Inicial
 | ID | Descripción | Acción / Entrada | Resultado Esperado | Estado |
