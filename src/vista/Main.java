@@ -10,19 +10,27 @@ import modelo.entidad.Producto;
 import modelo.entidad.Cliente;
 import controlador.Tienda;
 
-
 public class Main {
     static BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
     static String [] menuPrincipal = {"1.Acceder como administrador", "2.Acceder como cliente", "0.Salir"};
-    static String [] menuAdministrador = {"1.Registrar nuevo producto", "2.Ver inventario completo", "3.Atender siguiente cliente (facturar)", "0.Volver"};
+    // Menú de administrador actualizado con las opciones del grafo
+    static String [] menuAdministrador = {
+        "1.Registrar nuevo producto", 
+        "2.Ver inventario completo", 
+        "3.Atender siguiente cliente (facturar)", 
+        "4.Insertar vértice (Ubicación)", 
+        "5.Insertar arista (Conexión)", 
+        "6.Mostrar mapa/grafo", 
+        "0.Volver"
+    };
     static String [] menuCliente = {"1.Registrarse y realizar compra", "0.Volver"};
 
     public static void main(String[] args) throws IOException{
-    Tienda tienda = new Tienda();
-    ejecutarMenu(0, tienda);
+        Tienda tienda = new Tienda();
+        ejecutarMenu(0, tienda);
     }
 
-    //Rutinas genéricas para solicitar datos
+    // --- Rutinas genéricas para solicitar datos ---
 
     static byte solicitarOpcion() throws IOException{
         byte opcion = 0;
@@ -38,6 +46,7 @@ public class Main {
         }while(!opcionValida);
         return opcion;
     }
+
     static String solicitarTexto(String mensaje) throws IOException {
         System.out.println(mensaje);
         return in.readLine().trim();
@@ -84,7 +93,7 @@ public class Main {
         return rutaImagen;
     }
 
-    static  LocalDate solicitarFecha() throws IOException{
+    static LocalDate solicitarFecha() throws IOException{
         DateTimeFormatter formateador =  DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDate fechaFormatoDate = null;
         boolean fechaValida = false;
@@ -101,13 +110,22 @@ public class Main {
         return fechaFormatoDate;
     }
 
+    // --- NUEVO: Solicitar Ubicación ---
+    static String solicitarUbicacion() throws IOException {
+        String ubicacion = solicitarTexto("Ingrese la ubicación (Ej: heredia, san jose). Evite usar tildes:");
+        return ubicacion.toLowerCase();
+    }
+
+    // Modificado para pedir ubicación y llamar al nuevo constructor de Cliente
     static Cliente solicitarDatosCliente() throws IOException{
         String nombreCliente = solicitarTexto("Ingrese su nombre completo: ");
         int prioridadCliente = validarPrioridad();
-        return new Cliente (nombreCliente,prioridadCliente);
+        String ubicacionCliente = solicitarUbicacion();
+        return new Cliente(nombreCliente, prioridadCliente, ubicacionCliente);
     }
 
-    // Rutinas de ejecucion del menú
+    // --- Rutinas de ejecucion del menú ---
+    
     static void ejecutarMenu(int estadoActual, Tienda tienda) throws IOException{
         byte opcion;
         do{
@@ -124,7 +142,7 @@ public class Main {
         }
         System.out.println("========================================");
     }
-    // Rutinas relacionadas con procesar opciones
+
     static int procesarOpcion(int estadoActual,byte opcion, Tienda tienda)throws IOException{
         int siguienteEstado = estadoActual;
         switch(estadoActual){
@@ -157,21 +175,32 @@ public class Main {
         }
     }
 
+    // Modificado para procesar las nuevas opciones del grafo
     static int procesarMenuAdminstrador(byte opcion, Tienda tienda)throws IOException{
-        if(opcion == 0){
-            return 0;
-        }else if(opcion == 1){
-            registrarProducto(tienda);
-            return 1;
-        }else if(opcion == 2) {
-            mostrarInventario(tienda);
-            return 1;
-        }else if(opcion == 3) {
-            atenderCliente(tienda);
-            return 1;
-        }else{
-            System.out.println("\nError, seleccione una opción válida");
-            return 1;
+        switch(opcion) {
+            case 0:
+                return 0;
+            case 1:
+                registrarProducto(tienda);
+                return 1;
+            case 2:
+                mostrarInventario(tienda);
+                return 1;
+            case 3:
+                atenderCliente(tienda);
+                return 1;
+            case 4:
+                insertarVertice(tienda);
+                return 1;
+            case 5:
+                insertarArista(tienda);
+                return 1;
+            case 6:
+                mostrarGrafo(tienda);
+                return 1;
+            default:
+                System.out.println("\nError, seleccione una opción válida");
+                return 1;
         }
     }
 
@@ -201,7 +230,7 @@ public class Main {
         }
     }
 
-    // Rutinas específicas de gestion del inventario
+    // --- Rutinas específicas de gestion del inventario y clientes ---
 
     static void registrarProducto(Tienda tienda) throws IOException{
         String nombreProducto = solicitarTexto("Por favor ingrese el nombre del producto: ");
@@ -232,7 +261,19 @@ public class Main {
         }
     }
 
+    // Modificado para verificar la conectividad antes de facturar
     static void atenderCliente(Tienda tienda){
+        if (!tienda.hayClientesEnEspera()) {
+            System.out.println("\nNo hay clientes pendientes en la fila.");
+            return;
+        }
+        
+        if (!tienda.siguienteClienteConectado()) {
+            System.out.println("\nError: La ubicación del próximo cliente no está conectada al mapa de la tienda.");
+            System.out.println("El cliente permanecerá en la fila hasta que se agregue una ruta válida.");
+            return;
+        }
+
         Cliente proximoTurno = tienda.atenderSiguientePedido();
 
         if(proximoTurno != null){
@@ -240,6 +281,7 @@ public class Main {
             System.out.println("--- DETALLE DE FACTURACIÓN ---");
             System.out.println("Cliente: " + proximoTurno.getNombre());
             System.out.println("Priorirdad de atención: " +  proximoTurno.getPrioridad());
+            System.out.println("Destino: " + proximoTurno.getUbicacion());
             System.out.println("-------------------------------");
 
             System.out.println("\n --- PRODUCTOS ADQUIRIDOS ---");
@@ -248,10 +290,10 @@ public class Main {
                 System.out.println(producto.toString());
             }
             System.out.println("--------------------------------");
-            System.out.println("Costo total: " + proximoTurno.getCarrito().calcularTotalCarrito());
-
-        }else{
-            System.out.println("No hay clientes pendientes en la fila");
+            System.out.println("Costo total: $" + proximoTurno.getCarrito().calcularTotalCarrito());
+            
+            System.out.println("\n--- RUTA DE ENTREGA ---");
+            System.out.println(tienda.generarReporteRuta(proximoTurno));
         }
     }
 
@@ -260,7 +302,7 @@ public class Main {
         while(continuarComprando){
             System.out.println("---MENÚ DE COMPRAS---");
             System.out.println("1. Agregar producto al carrito");
-            System.out.println("2.Finalizar compra e ingresar a la cola de espera");
+            System.out.println("2. Finalizar compra e ingresar a la cola de espera");
             int opcionCompra = solicitarEntero("Seleccione una opcion: ");
             if(opcionCompra == 1){
                 String nombreBuscado = solicitarTexto("Ingrese el nombre del producto que desea buscar");
@@ -273,7 +315,7 @@ public class Main {
                 }
             }else if(opcionCompra == 2){
                 tienda.recibirPedido(cliente);
-                System.out.println("Pedido finalizado correctamente");
+                System.out.println("Pedido finalizado correctamente. Ha ingresado a la cola de espera.");
                 continuarComprando = false;
             }else{
                 System.out.println("Error, seleccione una opcion válida");
@@ -281,11 +323,35 @@ public class Main {
         }
     }
 
+    // --- NUEVO: Métodos de integración con el Grafo ---
+    
+    static void insertarVertice(Tienda tienda) throws IOException {
+        String vertice = solicitarUbicacion();
+        tienda.insertarVertice(vertice);
+        System.out.println("Vértice '" + vertice + "' registrado en el sistema.");
+    }
+
+    static void insertarArista(Tienda tienda) throws IOException {
+        System.out.println("--- CREACIÓN DE RUTA ---");
+        String origen = solicitarTexto("Ingrese la ubicación de origen: ").toLowerCase();
+        String destino = solicitarTexto("Ingrese la ubicación de destino: ").toLowerCase();
+        int peso = solicitarEntero("Ingrese la distancia (peso) de la ruta: ");
+        tienda.insertarArista(origen, destino, peso);
+        System.out.println("Ruta entre '" + origen + "' y '" + destino + "' registrada.");
+    }
+
+    static void mostrarGrafo(Tienda tienda) {
+        System.out.println("\n--- MAPA DE RUTAS (GRAFO) ---");
+        tienda.mostrarGrafo();
+    }
+
+    // --- Validaciones ---
+
     static int validarPrioridad() throws IOException{
         int prioridad;
         boolean prioridadValida = false;
         do{
-            prioridad = solicitarEntero("\nIngrese su nivel de prioridad (1: Básico, 2: Afiliado, 3: premium): ");
+            prioridad = solicitarEntero("\nIngrese su nivel de prioridad (1: Básico, 2: Afiliado, 3: Premium): ");
             if(prioridad < 1 || prioridad > 3 ){
                 System.out.println("La prioridad debe de ser un número entre 1 y 3");
             }else{
@@ -304,5 +370,4 @@ public class Main {
         }
         return null;
     }
-
 }
