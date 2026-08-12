@@ -4,63 +4,38 @@ import modelo.repositorio.ListaProductos;
 import modelo.repositorio.ArbolProductos;
 import modelo.repositorio.NodoArbol;
 
-public class Cliente {
-
-    //Atributos
+public class Cliente implements Comparable<Cliente> {
     private String nombre;
     private int prioridad;
-    private ListaProductos carrito;
-    //Contructor
-    public Cliente(String nombre, int prioridad){
+    private String ubicacion; // Nuevo atributo
+
+    // Constructor actualizado según requerimientos
+    public Cliente(String nombre, int prioridad, String ubicacion) {
         this.nombre = nombre;
         this.prioridad = prioridad;
-        carrito = new ListaProductos();
+        this.ubicacion = ubicacion;
     }
 
-    public boolean comprarProducto(String nombreProducto, int cantidadDeseada, ArbolProductos inventario){
-        NodoArbol nodoTienda = inventario.buscar(nombreProducto);
-        if (nodoTienda == null){
-            return false;
-        }
-        Producto productoTienda = nodoTienda.getProducto();
-
-        if (productoTienda.getCantidad() < cantidadDeseada){
-            return false;
-        }
-
-        productoTienda.setCantidad(productoTienda.getCantidad() - cantidadDeseada);
-
-        Producto copiaCarrito = new Producto(
-                productoTienda.getNombre(),
-                productoTienda.getPrecio(),
-                productoTienda.getCategoria(),
-                productoTienda.getFechaVencimiento(),
-                cantidadDeseada,
-                productoTienda.getListaImagenes());
-
-        carrito.insertarFinal(copiaCarrito);
-        return true;
-    }
-
-    // Getters y Setters
     public String getNombre() {
         return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
     }
 
     public int getPrioridad() {
         return prioridad;
     }
 
-    public void setPrioridad(int prioridad) {
-        this.prioridad = prioridad;
+    // Método nuevo
+    public String getUbicacion() {
+        return ubicacion;
     }
 
-    public ListaProductos getCarrito() {
-        return carrito;
+    // Método nuevo
+    public void setUbicacion(String ubicacion) {
+        this.ubicacion = ubicacion;
     }
 
+    @Override
+    public int compareTo(Cliente otro) {
+        return Integer.compare(this.prioridad, otro.prioridad);
+    }
 }
