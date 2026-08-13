@@ -45,8 +45,7 @@ public class Tienda {
     }
 
     public String generarReporteRuta(Cliente cliente) {
-        //String ubicacionCliente = cliente.getUbicacion(); // TODO: compilará cuando Kenny agregue el atributo
-        String ubicacionCliente = "heredia"; // TEMPORAL para probar el reporte
+        String ubicacionCliente = cliente.getUbicacion();
         String ubicacionTienda = this.ubicacion;
 
         List<String> camino = grafo.obtenerCaminoMasCorto(ubicacionTienda, ubicacionCliente);
@@ -87,10 +86,10 @@ public class Tienda {
     public void recibirPedido(Cliente clienteCarritoLleno){
         if(clienteCarritoLleno == null){
             return;
-        }//else if(!esUbicacionValida(clienteCarritoLleno.getUbicacion()))
-        // TODO: Descomentar cuando Kenny agregue getUbicacion() a Cliente
-        // grafo.agregarVertice(normalizar(clienteCarritoLleno.getUbicacion()));
-        //}
+        }
+        if(esUbicacionValida(clienteCarritoLleno.getUbicacion())){
+         grafo.agregarVertice(normalizar(clienteCarritoLleno.getUbicacion()));
+        }
         colaClientes.insertar(clienteCarritoLleno);
     }
 
@@ -150,10 +149,9 @@ public class Tienda {
             return false;
         }
         Cliente cliente = verSiguienteCliente();
-        //String ubicacionCliente = cliente.getUbicacion(); //TODO: Descomentar cuando kenny cree el atributo ubicacion en la clase cliente.
+        String ubicacionCliente = cliente.getUbicacion();
         String ubicacionTienda = this.ubicacion;
-        //return grafo.existeCamino(ubicacionCliente, ubicacionTienda);//TODO: Descomentar cuando kenny cree el atributo ubicacion en la clase cliente.
-        return true; // TODO: Quitar esta línea cuando se descomenten las de arriba
+        return grafo.existeCamino(ubicacionCliente, ubicacionTienda);
     }
 
     //Validaciónes
