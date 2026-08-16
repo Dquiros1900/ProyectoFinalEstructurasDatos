@@ -112,10 +112,18 @@ public class Main {
 
     // --- NUEVO: Solicitar Ubicación ---
     static String solicitarUbicacion() throws IOException {
-        String ubicacion = solicitarTexto("Ingrese la ubicación (Ej: heredia, san jose). Evite usar tildes:");
-        return ubicacion.toLowerCase();
-    }
+        String ubicacion = solicitarTexto("Ingrese la ubicación (Ej: heredia, san jose):");
 
+        ubicacion = ubicacion.toLowerCase().trim();
+
+        // Descompone caracteres acentuados en letra base + marca diacrítica
+        String normalizado = java.text.Normalizer.normalize(ubicacion, java.text.Normalizer.Form.NFD);
+
+        // La expresión regular \\p{InCombiningDiacriticalMarks} matchea todos los acentos sueltos
+        ubicacion = normalizado.replaceAll("\\p{InCombiningDiacriticalMarks}", "");
+
+        return ubicacion;
+    }
     // Modificado para pedir ubicación y llamar al nuevo constructor de Cliente
     static Cliente solicitarDatosCliente() throws IOException{
         String nombreCliente = solicitarTexto("Ingrese su nombre completo: ");
@@ -280,7 +288,7 @@ public class Main {
             System.out.println("------------------------------");
             System.out.println("--- DETALLE DE FACTURACIÓN ---");
             System.out.println("Cliente: " + proximoTurno.getNombre());
-            System.out.println("Priorirdad de atención: " +  proximoTurno.getPrioridad());
+            System.out.println("Prioridad de atención: " +  proximoTurno.getPrioridad());
             System.out.println("Destino: " + proximoTurno.getUbicacion());
             System.out.println("-------------------------------");
 
@@ -327,8 +335,12 @@ public class Main {
     
     static void insertarVertice(Tienda tienda) throws IOException {
         String vertice = solicitarUbicacion();
-        tienda.insertarVertice(vertice);
-        System.out.println("Vértice '" + vertice + "' registrado en el sistema.");
+        boolean exito = tienda.insertarVertice(vertice);
+        if(exito){
+            System.out.println("Vértice '" + vertice + "' registrado en el sistema.");
+        }else{
+            System.out.println("Error la ubicación no puede estar vacía");
+        }
     }
 
     static void insertarArista(Tienda tienda) throws IOException {
@@ -336,8 +348,13 @@ public class Main {
         String origen = solicitarTexto("Ingrese la ubicación de origen: ").toLowerCase();
         String destino = solicitarTexto("Ingrese la ubicación de destino: ").toLowerCase();
         int peso = solicitarEntero("Ingrese la distancia (peso) de la ruta: ");
-        tienda.insertarArista(origen, destino, peso);
-        System.out.println("Ruta entre '" + origen + "' y '" + destino + "' registrada.");
+        boolean exito = tienda.insertarArista(origen, destino, peso);
+        if(exito){
+            System.out.println("Ruta entre '" + origen + "' y '" + destino + "' registrada.");
+        }else{
+            System.out.println("Error: Datos inválidos. Verifique que las ubicaciones no estén vacías, que sean distintas, y que la distancia sea mayor a cero.");
+        }
+
     }
 
     static void mostrarGrafo(Tienda tienda) {

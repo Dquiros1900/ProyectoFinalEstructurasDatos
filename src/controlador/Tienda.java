@@ -5,6 +5,7 @@ import modelo.repositorio.ArbolProductos;
 import modelo.repositorio.ColaClientes;
 import modelo.repositorio.Grafo;
 import modelo.repositorio.NodoArbol;
+import modelo.repositorio.MapaInicial;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,7 @@ public class Tienda {
         colaClientes = new ColaClientes();
         this.ubicacion = "san jose";
         this.grafo = new Grafo();
-        cargarMapaBase();
+        MapaInicial.cargarGrafoBasico(grafo, ubicacion);
     }
 
     //Métodos del administrador
@@ -134,12 +135,11 @@ public class Tienda {
         return !colaClientes.estaVacia();
     }
 
-    private void cargarMapaBase(){
-        grafo.agregarArista("san jose", "heredia", 10);
-        grafo.agregarArista("san jose", "alajuela", 15);
-        grafo.agregarArista("san jose", "cartago", 20);
-        grafo.agregarArista("heredia", "alajuela", 12);
-        grafo.agregarArista("cartago", "heredia", 18);
+    public boolean existeVertice(String vertice){
+        if(!esUbicacionValida(vertice)){
+            return false;
+        }
+        return grafo.existeVertice(normalizar(vertice));
     }
 
     //Métodos de lógica de conectividad y ruta
